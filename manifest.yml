@@ -1,0 +1,25 @@
+applications:
+- name: demo-producer
+  memory: 32M
+  instances: 1
+  services:
+    demo-mq: rabbitmq3
+  timeout: 30
+  stackato:
+    description: Producer
+    autoscale:
+      enabled: true
+      instances:
+        min: 1
+        max: 8
+      cpu:
+        min: 40
+        max: 60
+    env:
+      MIN: 42
+      MAX: 48
+    ignores:
+      - .git
+      - bin
+      - demo-producer
+      - demo-producer.exe
