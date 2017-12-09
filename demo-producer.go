@@ -5,13 +5,13 @@ import (
 	// "encoding/json"
 	"fmt"
 	"log"
-	"strconv"
 	"math/rand"
+	"strconv"
 	// "time"
 	"net/http"
 
-	"github.com/streadway/amqp"
 	"github.com/gorilla/mux"
+	"github.com/streadway/amqp"
 )
 
 func confirmOne(ack, nack chan uint64) {
@@ -31,7 +31,7 @@ var q amqp.Queue
 func restHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
-  w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 
 	vars := mux.Vars(r)
@@ -51,7 +51,7 @@ func restHandler(w http.ResponseWriter, r *http.Request) {
 		max, _ := strconv.Atoi(os.Getenv("MAX"))
 
 		for i := 0; i < ordersNum; i++ {
-			message := strconv.Itoa(min + rand.Intn(max - min))
+			message := strconv.Itoa(min + rand.Intn(max-min))
 
 			err = channel.Publish("", q.Name, true, false, amqp.Publishing{
 				Headers:         amqp.Table{},
@@ -71,8 +71,8 @@ func restHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	output := "{\"ordersNum\": \""+vars["ordersNum"]+"\"}"
-  fmt.Fprintln(w, string(output))
+	output := "{\"ordersNum\": \"" + vars["ordersNum"] + "\"}"
+	fmt.Fprintln(w, string(output))
 }
 
 func main() {
@@ -90,19 +90,19 @@ func main() {
 	defer ch.Close()
 	channel = ch
 
-  channel.Confirm(false)
+	channel.Confirm(false)
 
 	ack, nack = channel.NotifyConfirm(make(chan uint64, 1), make(chan uint64, 1))
 
-	q, err = channel.QueueDeclare("demo-queue", true, false, false, false, nil)
+	q, err = channel.QueueDeclare(os.Getenv("queueName"), true, false, false, false, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	router := mux.NewRouter().StrictSlash(true)
-  router.HandleFunc("/{ordersNum:[0-9]+}", restHandler).Methods("POST", "OPTIONS")
+	router.HandleFunc("/{ordersNum:[0-9]+}", restHandler).Methods("POST", "OPTIONS")
 
-  fmt.Println("Demo Producer started, listening on port ", os.Getenv("PORT"))
-  log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+	fmt.Println("Demo Producer started, listening on port ", os.Getenv("PORT"))
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 
 }

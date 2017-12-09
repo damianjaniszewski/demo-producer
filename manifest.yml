@@ -18,6 +18,8 @@ applications:
     env:
       MIN: 42
       MAX: 48
+      queueName: 
+        default: demo-queue
     ignores:
       - .git
       - bin
