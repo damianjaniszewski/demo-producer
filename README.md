@@ -7,7 +7,7 @@ To deploy this application, execute the following commands:
   1. Clone repo:
 
     ```
-    $ git clone https://github.com/damianjaniszewski/go-env
+    $ git clone https://github.com/damianjaniszewski/demo-producer
     $ cd demo-producer
     ```
 
